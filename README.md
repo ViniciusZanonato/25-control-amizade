@@ -239,14 +239,6 @@ http://localhost:5000
 
 ---
 
-## 🤝 Suporte e Contato
-
-**Equipe Control + Amizade**  
-📧 Email: control.amizade@neurolearn.com  
-🌐 Sistema: NeuroLearn v2.0  
-📅 CodeRace 2025
-
----
 
 ## 📜 Licença e Uso
 
