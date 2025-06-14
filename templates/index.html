@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block title %}EduIA - Sistema Educacional com IA{% endblock %}
+
+{% block content %}
+<div class="hero-section py-5 text-center">
+    <div class="container">
+        <h1 class="display-4 mb-4">
+            <i class="fas fa-brain text-primary me-3"></i>
+            Sistema Educacional com IA
+        </h1>
+        <p class="lead mb-4">
+            Plataforma inovadora que utiliza Inteligência Artificial baseada em Ontopsicologia 
+            para identificar neurodivergências e potencializar o aprendizado individual.
+        </p>
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="alert alert-info" role="alert">
+                    <i class="fas fa-lightbulb me-2"></i>
+                    <strong>Baseado na Ontopsicologia de Antonio Meneghetti</strong><br>
+                    Nossa IA analisa padrões de resposta para identificar o potencial único de cada aluno.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card card-custom h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-chalkboard-teacher fa-3x text-primary mb-3"></i>
+                    <h4>Para Professores</h4>
+                    <p class="card-text">
+                        Crie atividades personalizadas, monitore o progresso dos alunos e 
+                        receba análises detalhadas sobre potenciais neurodivergências.
+                    </p>
+                    <a href="{{ url_for('registro') }}" class="btn btn-custom btn-lg text-white">
+                        Registrar como Professor
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6 mb-4">
+            <div class="card card-custom h-100">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-graduate fa-3x text-success mb-3"></i>
+                    <h4>Para Alunos</h4>
+                    <p class="card-text">
+                        Participe de atividades interativas enquanto nossa IA analisa 
+                        seu estilo de aprendizagem e identifica suas fortalezas.
+                    </p>
+                    <a href="{{ url_for('registro') }}" class="btn btn-success btn-lg">
+                        Registrar como Aluno
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="bg-light py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center mb-5">
+                <h2>Funcionalidades Principais</h2>
+                <p class="lead">Descubra como nossa plataforma revoluciona a educação</p>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="text-center">
+                    <i class="fas fa-brain fa-2x text-primary mb-3"></i>
+                    <h5>Análise de Neurodivergências</h5>
+                    <p>Identificação de TDAH, Autismo, Dislexia, Superdotação e outros padrões através de IA.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="text-center">
+                    <i class="fas fa-chart-line fa-2x text-success mb-3"></i>
+                    <h5>Monitoramento de Progress</h5>
+                    <p>Acompanhamento em tempo real do desenvolvimento educacional de cada aluno.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-4">
+                <div class="text-center">
+                    <i class="fas fa-users fa-2x text-warning mb-3"></i>
+                    <h5>Educação Personalizada</h5>
+                    <p>Estratégias pedagógicas adaptadas ao perfil único de cada estudante.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container py-5">
+    <div class="row">
+        <div class="col-12 text-center">
+            <h3>Já tem uma conta?</h3>
+            <p class="mb-4">Faça login para acessar sua área personalizada</p>
+            <a href="{{ url_for('login') }}" class="btn btn-outline-primary btn-lg">
+                <i class="fas fa-sign-in-alt me-2"></i>Fazer Login
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

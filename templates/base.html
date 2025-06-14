@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EduIA - Sistema Educacional{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #667eea;
+            --secondary-color: #764ba2;
+            --accent-color: #ffecd2;
+            --text-color: #2c3e50;
+            --bg-color: #ffffff;
+            --card-bg: #ffffff;
+            --navbar-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --footer-bg: #2c3e50;
+            --border-color: #dee2e6;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        [data-theme="dark"] {
+            --primary-color: #8b9dc3;
+            --secondary-color: #9a7fb8;
+            --accent-color: #3a3a3a;
+            --text-color: #e0e0e0;
+            --bg-color: #1a1a1a;
+            --card-bg: #2d2d2d;
+            --navbar-bg: linear-gradient(135deg, #4a5568 0%, #2d3748 100%);
+            --footer-bg: #1a202c;
+            --border-color: #4a5568;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        .navbar-custom {
+            background: var(--navbar-bg);
+            box-shadow: var(--shadow);
+        }
+        
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            font-weight: bold;
+        }
+        
+        .navbar-brand .logo {
+            width: 40px;
+            height: 40px;
+            margin-right: 10px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+        
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            box-shadow: var(--shadow);
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-custom {
+            background-color: var(--card-bg);
+            border: none;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+        
+        .btn-custom {
+            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-custom:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
+        
+        .footer {
+            background-color: var(--footer-bg);
+            color: white;
+            margin-top: auto;
+        }
+        
+        .neurologia-badge {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            color: #8b4513;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+        }
+        
+        .dark-mode-toggle {
+            background: none;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .dark-mode-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        .form-control, .form-select {
+            background-color: var(--card-bg);
+            border-color: var(--border-color);
+            color: var(--text-color);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            background-color: var(--card-bg);
+            border-color: var(--primary-color);
+            color: var(--text-color);
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .text-muted {
+            color: var(--text-color) !important;
+            opacity: 0.7;
+        }
+        
+        .alert {
+            border-radius: 10px;
+        }
+        
+        .badge {
+            font-size: 0.75em;
+            padding: 0.5em 0.75em;
+        }
+        
+        /* Modo de alto contraste */
+        .high-contrast {
+            filter: contrast(150%) brightness(110%);
+        }
+        
+        /* Tamanhos de fonte */
+        .font-small { font-size: 0.875rem; }
+        .font-normal { font-size: 1rem; }
+        .font-large { font-size: 1.125rem; }
+        .font-extra-large { font-size: 1.25rem; }
+        
+        /* Animações reduzidas */
+        .reduce-animations * {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+        }
+        
+        /* Navegação simplificada */
+        .simple-navigation .navbar-nav .nav-link {
+            font-size: 1.1rem;
+            padding: 0.75rem 1rem;
+        }
+        
+        /* Responsividade melhorada */
+        @media (max-width: 768px) {
+            .navbar-brand .logo {
+                width: 35px;
+                height: 35px;
+            }
+            
+            .card {
+                margin-bottom: 1rem;
+            }
+        }
+        
+        /* Loading spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <img src="{{ url_for('static', filename='logo.jpg') }}" alt="EduIA Logo" class="logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                <i class="fas fa-brain me-2" style="display: none;"></i>
+                EduIA - Sistema Educacional
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    {% if session.usuario_id %}
+                        {% if session.tipo == 'professor' %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('dashboard_professor') }}"><i class="fas fa-tachometer-alt me-1"></i>Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('criar_atividade') }}"><i class="fas fa-plus-circle me-1"></i>Criar Atividade</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('listar_alunos') }}"><i class="fas fa-users me-1"></i>Alunos</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('dashboard_aluno') }}"><i class="fas fa-tachometer-alt me-1"></i>Dashboard</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url_for('configuracoes_acessibilidade') }}"><i class="fas fa-universal-access me-1"></i>Acessibilidade</a>
+                            </li>
+                        {% endif %}
+                        <li class="nav-item">
+                            <button class="btn dark-mode-toggle me-2" onclick="toggleDarkMode()" id="darkModeToggle">
+                                <i class="fas fa-moon" id="darkModeIcon"></i>
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('logout') }}"><i class="fas fa-sign-out-alt me-1"></i>Sair</a>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <button class="btn dark-mode-toggle me-2" onclick="toggleDarkMode()" id="darkModeToggle">
+                                <i class="fas fa-moon" id="darkModeIcon"></i>
+                            </button>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('login') }}"><i class="fas fa-sign-in-alt me-1"></i>Login</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('registro') }}"><i class="fas fa-user-plus me-1"></i>Registro</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mt-4">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer mt-5 py-4">
+        <div class="container text-center">
+            <p>&copy; 2025 Sistema Educacional com IA - Baseado em Ontopsicologia de Antonio Meneghetti</p>
+            <p><small>Desenvolvido para identificação de neurodivergências e potencialização do aprendizado</small></p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Sistema de modo escuro e acessibilidade
+        class AccessibilityManager {
+            constructor() {
+                this.loadSettings();
+                this.applySettings();
+                this.bindEvents();
+            }
+            
+            loadSettings() {
+                // Carregar configurações do localStorage ou servidor
+                this.settings = {
+                    darkMode: localStorage.getItem('darkMode') === 'true',
+                    highContrast: localStorage.getItem('highContrast') === 'true',
+                    fontSize: localStorage.getItem('fontSize') || 'normal',
+                    reduceAnimations: localStorage.getItem('reduceAnimations') === 'true',
+                    simpleNavigation: localStorage.getItem('simpleNavigation') === 'true'
+                };
+                
+                // Se usuário logado, carregar do servidor
+                {% if session.usuario_id %}
+                this.loadServerSettings();
+                {% endif %}
+            }
+            
+            async loadServerSettings() {
+                try {
+                    const response = await fetch('/obter-configuracoes-acessibilidade');
+                    if (response.ok) {
+                        const serverSettings = await response.json();
+                        this.settings = { ...this.settings, ...serverSettings };
+                        this.applySettings();
+                    }
+                } catch (error) {
+                    console.log('Configurações locais utilizadas');
+                }
+            }
+            
+            applySettings() {
+                const html = document.documentElement;
+                const body = document.body;
+                
+                // Modo escuro
+                if (this.settings.darkMode) {
+                    html.setAttribute('data-theme', 'dark');
+                    this.updateDarkModeButton(true);
+                } else {
+                    html.setAttribute('data-theme', 'light');
+                    this.updateDarkModeButton(false);
+                }
+                
+                // Alto contraste
+                body.classList.toggle('high-contrast', this.settings.highContrast);
+                
+                // Tamanho da fonte
+                body.classList.remove('font-small', 'font-normal', 'font-large', 'font-extra-large');
+                body.classList.add(`font-${this.settings.fontSize}`);
+                
+                // Redução de animações
+                body.classList.toggle('reduce-animations', this.settings.reduceAnimations);
+                
+                // Navegação simplificada
+                const navbar = document.querySelector('.navbar');
+                if (navbar) {
+                    navbar.classList.toggle('simple-navigation', this.settings.simpleNavigation);
+                }
+            }
+            
+            updateDarkModeButton(isDark) {
+                const icon = document.getElementById('darkModeIcon');
+                if (icon) {
+                    icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+                }
+            }
+            
+            toggleDarkMode() {
+                this.settings.darkMode = !this.settings.darkMode;
+                this.saveSettings();
+                this.applySettings();
+            }
+            
+            saveSettings() {
+                // Salvar no localStorage
+                for (const [key, value] of Object.entries(this.settings)) {
+                    localStorage.setItem(key, value);
+                }
+                
+                // Se usuário logado, salvar no servidor
+                {% if session.usuario_id %}
+                this.saveServerSettings();
+                {% endif %}
+            }
+            
+            async saveServerSettings() {
+                try {
+                    await fetch('/salvar-configuracoes-acessibilidade', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(this.settings)
+                    });
+                } catch (error) {
+                    console.log('Erro ao salvar configurações no servidor');
+                }
+            }
+            
+            bindEvents() {
+                // Atalhos de teclado para acessibilidade
+                document.addEventListener('keydown', (e) => {
+                    // Ctrl + Shift + D = Toggle modo escuro
+                    if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+                        e.preventDefault();
+                        this.toggleDarkMode();
+                    }
+                    
+                    // Ctrl + Shift + = = Aumentar fonte
+                    if (e.ctrlKey && e.shiftKey && e.key === '+') {
+                        e.preventDefault();
+                        this.increaseFontSize();
+                    }
+                    
+                    // Ctrl + Shift + - = Diminuir fonte
+                    if (e.ctrlKey && e.shiftKey && e.key === '-') {
+                        e.preventDefault();
+                        this.decreaseFontSize();
+                    }
+                });
+            }
+            
+            increaseFontSize() {
+                const sizes = ['small', 'normal', 'large', 'extra-large'];
+                const currentIndex = sizes.indexOf(this.settings.fontSize);
+                if (currentIndex < sizes.length - 1) {
+                    this.settings.fontSize = sizes[currentIndex + 1];
+                    this.saveSettings();
+                    this.applySettings();
+                }
+            }
+            
+            decreaseFontSize() {
+                const sizes = ['small', 'normal', 'large', 'extra-large'];
+                const currentIndex = sizes.indexOf(this.settings.fontSize);
+                if (currentIndex > 0) {
+                    this.settings.fontSize = sizes[currentIndex - 1];
+                    this.saveSettings();
+                    this.applySettings();
+                }
+            }
+        }
+        
+        // Inicializar gerenciador de acessibilidade
+        let accessibilityManager;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            accessibilityManager = new AccessibilityManager();
+        });
+        
+        // Função global para toggle do modo escuro
+        function toggleDarkMode() {
+            if (accessibilityManager) {
+                accessibilityManager.toggleDarkMode();
+            }
+        }
+        
+        // Função para mostrar loading
+        function showLoading(element) {
+            const originalText = element.innerHTML;
+            element.innerHTML = '<span class="loading-spinner me-2"></span>Carregando...';
+            element.disabled = true;
+            return originalText;
+        }
+        
+        function hideLoading(element, originalText) {
+            element.innerHTML = originalText;
+            element.disabled = false;
+        }
+        
+        // Melhorar experiência de formulários
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-focus no primeiro campo de formulário
+            const firstInput = document.querySelector('form input:not([type="hidden"]):first-of-type');
+            if (firstInput && !window.location.hash) {
+                firstInput.focus();
+            }
+            
+            // Validação em tempo real
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                const inputs = form.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    input.addEventListener('blur', function() {
+                        if (this.checkValidity()) {
+                            this.classList.remove('is-invalid');
+                            this.classList.add('is-valid');
+                        } else {
+                            this.classList.remove('is-valid');
+                            this.classList.add('is-invalid');
+                        }
+                    });
+                });
+            });
+        });
+        
+        // Notificações melhoradas
+        function showNotification(message, type = 'info', duration = 5000) {
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
+            alertDiv.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+            alertDiv.innerHTML = `
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            document.body.appendChild(alertDiv);
+            
+            // Auto-remover após duração especificada
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, duration);
+        }
+        
+        // Interceptar erros de carregamento de imagem
+        document.addEventListener('DOMContentLoaded', function() {
+            const images = document.querySelectorAll('img');
+            images.forEach(img => {
+                img.addEventListener('error', function() {
+                    // Fallback para ícone se imagem não carregar
+                    if (this.classList.contains('logo')) {
+                        this.style.display = 'none';
+                        const fallback = this.nextElementSibling;
+                        if (fallback && fallback.tagName === 'I') {
+                            fallback.style.display = 'inline';
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+    
+    {% block scripts %}{% endblock %}
+</body>
+</html>
+

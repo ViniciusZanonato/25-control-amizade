@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+
+{% block title %}Questionário NeuroLearn - Forma Mentis{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-primary">
+                <div class="card-header bg-primary text-white text-center">
+                    <h2><i class="fas fa-brain"></i> Questionário NeuroLearn - Forma Mentis</h2>
+                    <p class="mb-0">Antes de começarmos a estudar juntos, queremos te conhecer melhor. Responda com sinceridade e no seu tempo. Não há certo ou errado aqui.</p>
+                </div>
+                <div class="card-body">
+                    <!-- Barra de Progresso -->
+                    <div class="progress mb-4">
+                        <div class="progress-bar bg-success" id="progressBar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                            <span id="progressText">0%</span>
+                        </div>
+                    </div>
+
+                    <!-- Formulário -->
+                    <form id="questionarioForm">
+                        {% for bloco_num, bloco_data in questoes.items() %}
+                        <div class="bloco-questoes" id="bloco-{{ bloco_num }}" {% if bloco_num != 1 %}style="display: none;"{% endif %}>
+                            <div class="text-center mb-4">
+                                <h3 class="text-primary">
+                                    <i class="fas fa-brain"></i> Bloco {{ bloco_num }}: {{ bloco_data.titulo }}
+                                </h3>
+                                <p class="text-muted">Página {{ bloco_num }} de 7</p>
+                            </div>
+
+                            {% for questao in bloco_data.questoes %}
+                            {% set questao_id = (bloco_num - 1) * 10 + loop.index %}
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h6 class="card-title text-primary">Questão {{ questao_id }}</h6>
+                                    <p class="card-text">{{ questao }}</p>
+                                    
+                                    <div class="row text-center">
+                                        <div class="col-12 mb-2">
+                                            <small class="text-muted">Discordo Totalmente → Concordo Totalmente</small>
+                                        </div>
+                                        {% for valor in range(1, 6) %}
+                                        <div class="col">
+                                            <div class="form-check form-check-inline">
+                                                <input class="form-check-input questao-input" type="radio" 
+                                                       name="questao_{{ questao_id }}" id="q{{ questao_id }}_{{ valor }}" 
+                                                       value="{{ valor }}" required>
+                                                <label class="form-check-label" for="q{{ questao_id }}_{{ valor }}">
+                                                    <span class="badge 
+                                                        {% if valor == 1 %}badge-danger
+                                                        {% elif valor == 2 %}badge-warning
+                                                        {% elif valor == 3 %}badge-secondary
+                                                        {% elif valor == 4 %}badge-info
+                                                        {% else %}badge-success{% endif %}">
+                                                        {{ valor }}
+                                                    </span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% endfor %}
+
+                        <!-- Botões de Navegação -->
+                        <div class="row mt-4">
+                            <div class="col-6">
+                                <button type="button" class="btn btn-outline-secondary" id="btnAnterior" style="display: none;">
+                                    <i class="fas fa-arrow-left"></i> Anterior
+                                </button>
+                            </div>
+                            <div class="col-6 text-right">
+                                <button type="button" class="btn btn-primary" id="btnProximo">
+                                    Próximo <i class="fas fa-arrow-right"></i>
+                                </button>
+                                <button type="button" class="btn btn-success" id="btnGerar" style="display: none;">
+                                    <i class="fas fa-magic"></i> Gerar Meu Perfil de Aprendizagem
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal de Loading -->
+<div class="modal fade" id="loadingModal" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="sr-only">Carregando...</span>
+                </div>
+                <h5>Gerando seu Perfil de Aprendizagem...</h5>
+                <p class="text-muted">Nossa IA está analisando suas respostas com base na Metodologia Ontopsicológica. Aguarde um momento.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let blocoAtual = 1;
+const totalBlocos = 7;
+const questoesPorBloco = 10;
+const totalQuestoes = 67;
+
+// Atualizar progresso
+function atualizarProgresso() {
+    const questoesRespondidas = document.querySelectorAll('input[type="radio"]:checked').length;
+    const porcentagem = Math.round((questoesRespondidas / totalQuestoes) * 100);
+    
+    document.getElementById('progressBar').style.width = porcentagem + '%';
+    document.getElementById('progressBar').setAttribute('aria-valuenow', porcentagem);
+    document.getElementById('progressText').textContent = porcentagem + '%';
+}
+
+// Verificar se bloco está completo
+function blocoCompleto(numeroBloco) {
+    const inicioQuestao = (numeroBloco - 1) * questoesPorBloco + 1;
+    const fimQuestao = numeroBloco === 7 ? 67 : numeroBloco * questoesPorBloco;
+    
+    for (let i = inicioQuestao; i <= fimQuestao; i++) {
+        if (!document.querySelector(`input[name="questao_${i}"]:checked`)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+// Mostrar bloco
+function mostrarBloco(numeroBloco) {
+    // Ocultar todos os blocos
+    document.querySelectorAll('.bloco-questoes').forEach(bloco => {
+        bloco.style.display = 'none';
+    });
+    
+    // Mostrar bloco atual
+    document.getElementById(`bloco-${numeroBloco}`).style.display = 'block';
+    
+    // Atualizar botões
+    document.getElementById('btnAnterior').style.display = numeroBloco > 1 ? 'inline-block' : 'none';
+    document.getElementById('btnProximo').style.display = numeroBloco < totalBlocos ? 'inline-block' : 'none';
+    document.getElementById('btnGerar').style.display = numeroBloco === totalBlocos ? 'inline-block' : 'none';
+    
+    // Scroll para o topo
+    window.scrollTo(0, 0);
+}
+
+// Event listeners
+document.getElementById('btnProximo').addEventListener('click', function() {
+    if (blocoCompleto(blocoAtual)) {
+        blocoAtual++;
+        mostrarBloco(blocoAtual);
+    } else {
+        alert('Por favor, responda todas as questões deste bloco antes de continuar.');
+    }
+});
+
+document.getElementById('btnAnterior').addEventListener('click', function() {
+    if (blocoAtual > 1) {
+        blocoAtual--;
+        mostrarBloco(blocoAtual);
+    }
+});
+
+document.getElementById('btnGerar').addEventListener('click', function() {
+    if (!blocoCompleto(blocoAtual)) {
+        alert('Por favor, responda todas as questões antes de gerar seu perfil.');
+        return;
+    }
+    
+    // Coletar respostas
+    const respostas = {};
+    for (let i = 1; i <= totalQuestoes; i++) {
+        const input = document.querySelector(`input[name="questao_${i}"]:checked`);
+        if (input) {
+            respostas[i] = parseInt(input.value);
+        }
+    }
+    
+    // Mostrar modal de loading
+    $('#loadingModal').modal('show');
+    
+    // Enviar para o servidor
+    fetch('/salvar-questionario', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify({respostas: respostas})
+    })
+    .then(response => response.json())
+    .then(data => {
+        $('#loadingModal').modal('hide');
+        if (data.sucesso) {
+            alert('Perfil gerado com sucesso! Redirecionando para seu dashboard...');
+            window.location.href = '/dashboard-aluno';
+        } else {
+            alert('Erro ao gerar perfil: ' + data.erro);
+        }
+    })
+    .catch(error => {
+        $('#loadingModal').modal('hide');
+        console.error('Erro:', error);
+        alert('Erro ao salvar questionário. Tente novamente.');
+    });
+});
+
+// Atualizar progresso quando resposta é selecionada
+document.addEventListener('change', function(e) {
+    if (e.target.classList.contains('questao-input')) {
+        atualizarProgresso();
+    }
+});
+
+// Inicializar
+atualizarProgresso();
+</script>
+{% endblock %}
+

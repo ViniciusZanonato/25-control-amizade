@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard Professor - EduIA{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card card-custom bg-primary text-white">
+            <div class="card-body">
+                <h2><i class="fas fa-chalkboard-teacher me-2"></i>Dashboard do Professor</h2>
+                <p class="mb-0">Gerencie atividades e monitore o progresso dos alunos com análises de IA</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4">
+        <div class="card card-custom text-center">
+            <div class="card-body">
+                <i class="fas fa-tasks fa-2x text-primary mb-3"></i>
+                <h5>{{ atividades|length }}</h5>
+                <p class="text-muted">Atividades Criadas</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-custom text-center">
+            <div class="card-body">
+                <i class="fas fa-users fa-2x text-success mb-3"></i>
+                <h5>-</h5>
+                <p class="text-muted">Alunos Ativos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card card-custom text-center">
+            <div class="card-body">
+                <i class="fas fa-brain fa-2x text-warning mb-3"></i>
+                <h5>-</h5>
+                <p class="text-muted">Análises de IA</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <div class="card card-custom">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-list me-2"></i>Atividades Criadas</h5>
+                <a href="{{ url_for('criar_atividade') }}" class="btn btn-custom btn-sm text-white">
+                    <i class="fas fa-plus me-1"></i>Nova Atividade
+                </a>
+            </div>
+            <div class="card-body">
+                {% if atividades %}
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Título</th>
+                                    <th>Tipo</th>
+                                    <th>Data Criação</th>
+                                    <th>Respostas</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for atividade in atividades %}
+                                <tr>
+                                    <td>
+                                        <strong>{{ atividade.titulo }}</strong><br>
+                                        <small class="text-muted">{{ atividade.descricao[:50] }}...</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">{{ atividade.tipo }}</span>
+                                    </td>
+                                    <td>{{ atividade.data_criacao.strftime('%d/%m/%Y') }}</td>
+                                    <td>
+                                        <span class="badge bg-success">{{ atividade.respostas|length }}</span>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-outline-primary btn-sm" 
+                                                onclick="verDetalhes({{ atividade.id }})">
+                                            <i class="fas fa-eye"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="fas fa-plus-circle fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Nenhuma atividade criada</h5>
+                        <p class="text-muted">Crie sua primeira atividade para começar a coletar dados dos alunos</p>
+                        <a href="{{ url_for('criar_atividade') }}" class="btn btn-custom text-white">
+                            <i class="fas fa-plus me-2"></i>Criar Primeira Atividade
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <div class="card card-custom">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-bar me-2"></i>Ações Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('painel_professor') }}" class="btn btn-success">
+                        <i class="fas fa-brain me-2"></i>Painel NeuroLearn
+                    </a>
+                    <a href="{{ url_for('criar_atividade') }}" class="btn btn-custom text-white">
+                        <i class="fas fa-plus me-2"></i>Criar Atividade
+                    </a>
+                    <a href="{{ url_for('listar_alunos') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-users me-2"></i>Ver Alunos
+                    </a>
+                    <button class="btn btn-outline-info" onclick="gerarRelatorioGeral()">
+                        <i class="fas fa-file-pdf me-2"></i>Relatório Geral
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card card-custom mt-3">
+            <div class="card-header">
+                <h5><i class="fas fa-lightbulb me-2"></i>Dicas da IA</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <small>
+                        <i class="fas fa-robot me-2"></i>
+                        <strong>Dica:</strong> Crie atividades variadas (lógica, criatividade, memória) 
+                        para uma análise mais completa do perfil cognitivo dos alunos.
+                    </small>
+                </div>
+                <div class="alert alert-warning">
+                    <small>
+                        <i class="fas fa-brain me-2"></i>
+                        <strong>Ontopsicologia:</strong> Observe padrões de resposta que revelam 
+                        o "Em Si ôntico" de cada aluno para personalizar o ensino.
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function verDetalhes(atividadeId) {
+    // Implementar modal ou redirecionamento para detalhes da atividade
+    alert('Função em desenvolvimento - Ver detalhes da atividade ' + atividadeId);
+}
+
+function gerarRelatorioGeral() {
+    // Implementar geração de relatório
+    alert('Função em desenvolvimento - Gerar relatório geral');
+}
+</script>
+{% endblock %}
+

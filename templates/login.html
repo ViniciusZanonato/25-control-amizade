@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}Login - EduIA{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card card-custom">
+            <div class="card-header text-center bg-primary text-white">
+                <h3><i class="fas fa-sign-in-alt me-2"></i>Login</h3>
+                <p class="mb-0">Acesse sua conta no Sistema Educacional</p>
+            </div>
+            <div class="card-body">
+                <form id="loginForm">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="senha" class="form-label">Senha</label>
+                        <input type="password" class="form-control" id="senha" name="senha" required>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-custom btn-lg text-white">
+                            <i class="fas fa-sign-in-alt me-2"></i>Entrar
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <p class="mb-0">Não tem uma conta? <a href="{{ url_for('registro') }}">Registre-se aqui</a></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    try {
+        const response = await fetch('{{ url_for("login") }}', {
+            method: 'POST',
+            body: formData
+        });
+        
+        if (response.ok) {
+            window.location.href = response.url;
+        } else {
+            const result = await response.json();
+            alert('Erro: ' + result.erro);
+        }
+    } catch (error) {
+        alert('Erro na comunicação com o servidor');
+    }
+});
+</script>
+{% endblock %}
+

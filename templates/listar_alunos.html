@@ -1,0 +1,281 @@
+{% extends "base.html" %}
+
+{% block title %}Alunos - EduIA{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card card-custom bg-info text-white">
+            <div class="card-body">
+                <h2><i class="fas fa-users me-2"></i>Gestão de Alunos</h2>
+                <p class="mb-0">Monitore o progresso e análises de IA dos seus alunos</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card card-custom text-center">
+            <div class="card-body">
+                <i class="fas fa-user-graduate fa-2x text-primary mb-3"></i>
+                <h5>{{ alunos|length }}</h5>
+                <p class="text-muted">Total de Alunos</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-custom text-center">
+            <div class="card-body">
+                <i class="fas fa-brain fa-2x text-warning mb-3"></i>
+                <h5>-</h5>
+                <p class="text-muted">Análises Realizadas</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-custom text-center">
+            <div class="card-body">
+                <i class="fas fa-exclamation-triangle fa-2x text-danger mb-3"></i>
+                <h5>-</h5>
+                <p class="text-muted">Alertas</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card card-custom text-center">
+            <div class="card-body">
+                <i class="fas fa-star fa-2x text-success mb-3"></i>
+                <h5>-</h5>
+                <p class="text-muted">Destaques</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card card-custom">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-list me-2"></i>Lista de Alunos</h5>
+                <div class="input-group" style="width: 300px;">
+                    <input type="text" class="form-control" id="filtroAluno" placeholder="Buscar aluno...">
+                    <button class="btn btn-outline-secondary" type="button" id="btnFiltrar">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if alunos %}
+                    <div class="table-responsive">
+                        <table class="table table-hover" id="tabelaAlunos">
+                            <thead>
+                                <tr>
+                                    <th>Aluno</th>
+                                    <th>Idade</th>
+                                    <th>Série</th>
+                                    <th>Atividades</th>
+                                    <th>Análises IA</th>
+                                    <th>Última Atividade</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for aluno in alunos %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            <div class="avatar-circle bg-primary text-white me-3">
+                                                {{ aluno.usuario.nome.split()[0][0] }}{{ aluno.usuario.nome.split()[-1][0] if aluno.usuario.nome.split()|length > 1 else '' }}
+                                            </div>
+                                            <div>
+                                                <strong>{{ aluno.usuario.nome }}</strong><br>
+                                                <small class="text-muted">{{ aluno.usuario.email }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ aluno.idade or '-' }}</td>
+                                    <td>{{ aluno.serie or '-' }}</td>
+                                    <td>
+                                        <span class="badge bg-info">{{ aluno.respostas|length }}</span>
+                                    </td>
+                                    <td>
+                                        {% if aluno.analises|length > 0 %}
+                                            <span class="badge bg-success">{{ aluno.analises|length }}</span>
+                                        {% else %}
+                                            <span class="badge bg-light text-dark">0</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% if aluno.respostas %}
+                                            {{ aluno.respostas[-1].data_envio.strftime('%d/%m/%Y') }}
+                                        {% else %}
+                                            <span class="text-muted">-</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a href="{{ url_for('relatorio_aluno', aluno_id=aluno.id) }}" 
+                                               class="btn btn-outline-primary btn-sm" 
+                                               title="Ver Relatório">
+                                                <i class="fas fa-chart-line"></i>
+                                            </a>
+                                            <button class="btn btn-outline-info btn-sm" 
+                                                    onclick="verAnalises({{ aluno.id }})" 
+                                                    title="Análises IA">
+                                                <i class="fas fa-brain"></i>
+                                            </button>
+                                            <button class="btn btn-outline-warning btn-sm" 
+                                                    onclick="enviarMensagem({{ aluno.id }})" 
+                                                    title="Enviar Mensagem">
+                                                <i class="fas fa-message"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="text-center py-5">
+                        <i class="fas fa-user-plus fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">Nenhum aluno cadastrado</h5>
+                        <p class="text-muted">Os alunos aparecerão aqui quando se cadastrarem na plataforma</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Análises IA -->
+<div class="modal fade" id="modalAnalises" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-brain me-2"></i>Análises de IA
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body" id="conteudoAnalises">
+                <div class="text-center">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="visually-hidden">Carregando...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Enviar Mensagem -->
+<div class="modal fade" id="modalMensagem" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    <i class="fas fa-message me-2"></i>Enviar Mensagem
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formMensagem">
+                    <div class="mb-3">
+                        <label for="assunto" class="form-label">Assunto</label>
+                        <input type="text" class="form-control" id="assunto" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="mensagem" class="form-label">Mensagem</label>
+                        <textarea class="form-control" id="mensagem" rows="4" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="enviarMensagemForm()">Enviar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<style>
+.avatar-circle {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 14px;
+}
+</style>
+
+<script>
+let alunoSelecionado = null;
+
+function verAnalises(alunoId) {
+    alunoSelecionado = alunoId;
+    const modal = new bootstrap.Modal(document.getElementById('modalAnalises'));
+    
+    // Simular carregamento de análises
+    document.getElementById('conteudoAnalises').innerHTML = `
+        <div class="alert alert-info">
+            <h6><i class="fas fa-info-circle me-2"></i>Análises Disponíveis</h6>
+            <p>As análises de IA serão exibidas aqui conforme o aluno responder às atividades.</p>
+        </div>
+        <div class="text-center text-muted">
+            <i class="fas fa-brain fa-3x mb-3"></i>
+            <p>Nenhuma análise disponível ainda</p>
+        </div>
+    `;
+    
+    modal.show();
+}
+
+function enviarMensagem(alunoId) {
+    alunoSelecionado = alunoId;
+    const modal = new bootstrap.Modal(document.getElementById('modalMensagem'));
+    modal.show();
+}
+
+function enviarMensagemForm() {
+    const assunto = document.getElementById('assunto').value;
+    const mensagem = document.getElementById('mensagem').value;
+    
+    if (assunto && mensagem) {
+        alert('Mensagem enviada com sucesso!');
+        bootstrap.Modal.getInstance(document.getElementById('modalMensagem')).hide();
+        document.getElementById('formMensagem').reset();
+    } else {
+        alert('Por favor, preencha todos os campos.');
+    }
+}
+
+// Filtro de alunos
+document.getElementById('filtroAluno').addEventListener('input', function() {
+    const filtro = this.value.toLowerCase();
+    const linhas = document.querySelectorAll('#tabelaAlunos tbody tr');
+    
+    linhas.forEach(linha => {
+        const nome = linha.querySelector('td strong').textContent.toLowerCase();
+        const email = linha.querySelector('td small').textContent.toLowerCase();
+        
+        if (nome.includes(filtro) || email.includes(filtro)) {
+            linha.style.display = '';
+        } else {
+            linha.style.display = 'none';
+        }
+    });
+});
+
+document.getElementById('btnFiltrar').addEventListener('click', function() {
+    document.getElementById('filtroAluno').focus();
+});
+</script>
+{% endblock %}
+
